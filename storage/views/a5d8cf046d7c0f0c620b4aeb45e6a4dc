@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html prefix='og: http://ogp.me/ns#'>
+<head>
+
+	<meta charset="UTF-8">
+	<title><?php echo $case->title; ?> | 新案訊息 | 米築</title>
+	<?php echo $__env->make("fb_code", array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+	<link rel="shortcut icon" href="/favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta property="og:title"  content="<?php echo $case->fb_title; ?>"></meta>
+	<meta property="og:type"   content="房屋"></meta>
+	<meta property="fb:app_id" content="1325670327461704" /></meta>
+	<meta name="description" content="<?php echo $case->title; ?>,<?php echo ms_str($case->content,200); ?>" />
+
+	<meta name="title" content="<?php echo $case->title; ?>" />
+	<meta property="og:url" content="<?php echo Request::url(); ?>" /></meta>
+	<meta property="og:site_name" content="米築"></meta>
+	<meta property="og:description" content="<?php echo ms_str($case->content,200); ?>"></meta>
+
+
+
+	<?php
+	// try {
+	// 				$rate_pics=DB::table("rate_pics")
+	// 												->where('rate_id',$case->id)
+	// 												->whereIn('name',array("setGoogle","setList","setFB"));
+	//
+	// 			if($rate_pics->count()>0){
+	//
+	// 				foreach($rate_pics->get() as $pic){
+	// 						if( !empty($pic->image) AND File::exists(public_path().$pic->image) ){
+	// 								echo '<meta property="og:image" content="http://www.maisonbest.com.tw/public'.$pic->image.'" /></meta>';
+	// 						}
+	// 				}
+	//
+	// 			}else{
+	// 					echo '<meta property="og:image" content="http://www.maisonbest.com.tw/images/index/logo.jpg" /></meta>';
+	// 			}
+	// 			// echo "</div>";
+	// } catch (Exception $e) {
+	// 		echo '<meta property="og:image" content="http://www.maisonbest.com.tw/images/index/logo.jpg" /></meta>';
+	//
+	// }
+
+	?>
+
+
+	<?php
+		$r_img = getRateImageType($case->id,'setFB');
+	?>
+	<?php if(  !empty($r_img->image) AND File::exists( public_path().$r_img->image)  ): ?>
+		<meta property="og:image" content="http://www.maisonbest.com.tw/public<?php echo $r_img->image; ?>" /></meta>
+	<?php else: ?>
+		<meta property="og:image" content="http://www.maisonbest.com.tw/images/index/logo.jpg" /></meta>
+
+	<?php endif; ?>
+
+
+	<link href="/css/jquery-ui.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="/css/slick/slick.css">
+    <link rel="stylesheet" type="text/css" href="/css/slick/slick-theme.css">
+    <link rel="stylesheet" type="text/css" href="/css/default.css">
+    <link rel="stylesheet" type="text/css" href="/css/case.css">
+    <link rel="stylesheet" type="text/css" href="/css/case2.css">
+
+    <script src="/js/jquery.js"></script>
+		<script src="/js/jquery.flexslider-min.js"></script>
+    <script src="/js/slick.min.js"></script>
+    <script src="/js/Crawler.js"></script>
+		<script src="http://malsup.github.com/jquery.cycle2.js"></script>
+    <script src="/js/script.js"></script>
+
+		<script src="/js/jquery.tinyMap.js"></script>
+
+
+		<script type="text/javascript">
+				$(window).load(function() {
+
+					$('.fs1').flexslider({
+					   // start: function(){
+					   //  if( $('.fs1:eq(0) li:eq(1)').has("video").length ){
+					   //   $('.fs1:eq(0) li:eq(1) video').get(0).pause();
+					   //  }
+					   // },
+					   animation: "slide",
+					   slideshowSpeed: 3500,
+					   smoothHeight: true,
+					   after: function(){
+					    var video = $('.fs1 .flex-active-slide');
+
+					    if( video.has("video").length ){
+					     $('.fs1 .slideVideo').each(function(){
+					      $(this).get(0).pause();
+					     });
+					     if( video.find("video").get(0).currentTime != 0 ){
+					      video.find("video").get(0).play();
+					     }
+					    }
+					    else{
+					     $('.fs1 .slideVideo').each(function(){
+					      $(this).get(0).pause();
+					     });
+					    }
+					   }
+					  });
+					  // $('.fs1').flexslider("stop");
+
+					  // FullScreen
+					  var fulls;
+					  $('.fs1 video , #videoBG').click(function(){
+							var h = $(".fs1 .flex-viewport").height();
+							var vid = $(this).parent().find("video").get(0);
+					  //  var vid = $('.fs1 video').get(0);
+
+						 if (vid.requestFullscreen) {
+
+					        vid.requestFullscreen();
+									exitFull(h);
+									$("#videoBG").css("opacity",0);
+									vid.play();
+
+					      } else if (vid.mozRequestFullScreen) {
+
+					        vid.mozRequestFullScreen();
+									exitFull(h);
+									$("#videoBG").css("opacity",0);
+									vid.play();
+
+					      } else if (vid.webkitRequestFullscreen) {
+
+					        vid.webkitRequestFullscreen();
+									exitFull(h);
+									$("#videoBG").css("opacity",0);
+									vid.play();
+
+					      }
+
+					  });
+
+
+					function exitFull(h){
+		   			$(".fs1 .flex-viewport").height(h);
+		  		}
+
+				  // if hover .fs1
+				  $(".fs1").hover(function(){
+				   $('.fs1').flexslider("pause");
+				  },function(){
+				   $('.fs1').flexslider("play");
+				  });
+
+					// $('.fs1').flexslider("stop");
+
+				});
+
+		function loadMap(){
+		  var map 	=  $('.wmap');
+
+		  map.tinyMap({
+		    'center':  ['<?php echo $case->latitude; ?>','<?php echo $case->longitude; ?>'],
+		    'zoom': 13,
+				'infoWindowAutoClose':true,
+				'scrollwheel': false,
+		    'marker': [
+		          {
+		            'addr'          :['<?php echo $case->latitude; ?>','<?php echo $case->longitude; ?>'],
+
+		            'icon'          : createMarkerIcon('<?php echo $case->title; ?>'),
+		            'newLabelCSS'   : 'labels',
+		            'ignore'        : true,
+		            'text'          :    '<table><tr><td>'+
+																					<?php
+																						$o_img = getRateImageType($case->id,'setGoogle');
+																					?>
+																					<?php if(  !empty($o_img->image) AND File::exists( public_path().$o_img->image)  ): ?>
+																						'<img src="/public<?php echo $o_img->image; ?>"    >'+
+																					<?php endif; ?>
+																			'</td><td> '+
+
+																					' <?php echo $case->googleTitle; ?><br>'+
+																					' <?php echo $case->googleContent; ?><br>'+
+
+																			'</td></tr></table>'
+
+		          },
+							<?php foreach($cases as $o_case): ?>
+								{
+									'addr'          : ['<?php echo $o_case->latitude; ?>','<?php echo $o_case->longitude; ?>'],
+
+									'icon'          : createMarkerIcon('<?php echo $o_case->title; ?>'),
+									'newLabelCSS'   : 'labels',
+									'ignore'        : true,
+									'text'          : '<table><tr><td>'+
+																				<?php
+																					$r_img = getRateImageType($o_case->id,'setGoogle');
+																				?>
+																				<?php if(  !empty($r_img->image) AND File::exists( public_path().$r_img->image)  ): ?>
+												                	'<img src="/public<?php echo $r_img->image; ?>"    >'+
+																				<?php endif; ?>
+																			 '</td><td>'+
+																					 '<?php echo $o_case->googleTitle; ?> <br>'+
+																					 ' <?php echo $o_case->googleContent; ?> '+
+																			 '<ul></td></tr></table>'
+
+								},
+							<?php endforeach; ?>
+
+		    ] ,
+		});
+		}
+
+		$("document").ready(function(){
+
+			$.fn.tinyMapConfigure({
+			    // Google Maps API URL
+			    'api': '//maps.googleapis.com/maps/api/js',
+			    // Google Maps API Version
+			    'v': '3.21',
+			    // Google Maps API Key，預設 null
+			    'key': 'AIzaSyAd1MVcmyAZVp9PmtbRFuHlAqrRjSB-vPU',
+			    // 使用的地圖語言
+			    'language': 'zh‐TW'
+			});
+		        loadMap();
+		});
+
+
+
+		</script>
+		<script src="/js/cases.js"></script>
+		<style type="text/css">
+		  #map-canvas { height: 100%; margin: 0; padding: 0;}
+
+
+			.wmap {
+				width: 100%; height: 500px;
+			}
+
+			@media (max-width: 480px) {
+
+
+				.wmap {
+			    height: 250px;
+			  }
+			}
+		</style>
+</head>
+	<?php echo $__env->make("ba", array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<body>
+<?php echo $__env->make("ga_code", array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+
+
+
+
+<div id="container">
+
+
+	<div class="WtfMap"></div>
+	<?php echo $__env->make("frontend.comm.top", array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+
+    <?php echo $__env->make("frontend.comm.top_ad",array("sql_data"=>$ad_12), array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+
+    <img id="toTop" src="/images/toTop.png">
+		<?php echo $__env->make("frontend.comm.row-marquee",array("m"=>"m3" , "c_sql"=>$ad_8), array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+
+
+
+		<div class="mainPic">
+        <div class="flex">
+            <div class="flexslider fs1">
+                <ul class="slides">
+
+										<?php echo $case->title; ?>
+
+										<?php
+							      $rate_pics=DB::table("rate_pics")
+																		->where('rate_id',$case->id)
+																		->whereNotIn('name',array("setGoogle","setList","setShow","setFB"))
+																		->take(6)
+																		->get();
+							      ?>
+
+
+										<?php if(strlen($case->video) > 3): ?>
+												<li  >
+														<video 	class="slideVideo"
+														<?php if(!empty($case->poster)): ?>
+															poster="<?php echo "/public/videos/".$case->poster; ?>"
+														<?php endif; ?>
+														 width="100%" controls >
+																<source src="<?php echo "/public/videos/".$case->video; ?>" type="video/mp4" >
+														</video>
+
+														<img id="videoBG" src="/images/index/play.png">
+
+												</li>
+										<?php endif; ?>
+
+							      <?php foreach($rate_pics as $pic): ?>
+												<?php if( !empty($pic->image) AND File::exists(public_path().$pic->image) ): ?>
+				                    <li>
+				                        <img src="/public<?php echo $pic->image; ?>" />
+				                    </li>
+												<?php endif; ?>
+										<?php endforeach; ?>
+
+
+
+
+
+
+
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <div id="main">
+
+        <span id="Name"><?php echo $case->title; ?></span>
+
+        <p id="subTitle">
+					<span><?php echo $case->sub; ?></span>
+
+
+					<span class="clearfix">
+					<?php if($case->videoLink): ?>
+						<a href="<?php echo $case->videoLink; ?>" target="_new" >
+								<img src="/images/case/icon4.png">
+						</a>
+					<?php endif; ?>
+
+					<?php if($case->vr360Link): ?>
+						<a href="http://maisonbest.com.tw/360/<?php echo $case->vr360Link; ?>"  target="_new" >
+							<img src="/images/case/icon3.png">
+						</a>
+					<?php endif; ?>
+
+					<a href="javascript: void(window.open('http://www.facebook.com/share.php?u='.concat(encodeURIComponent(location.href)) ));"  target="_new" >
+							<img src="/images/case/icon2.png">
+					</a>
+
+					<a href="http://line.naver.jp/R/msg/text/?<?php echo $case->title; ?>%0D%0A<?php echo Request::url(); ?>" rel="nofollow" >
+						<img src="/images/case/icon1.png"   alt="用LINE傳送"   />
+					</a>
+
+					 
+
+					<?php if($case->lineLink): ?>
+						<a href="<?php echo $case->lineLink; ?>"  target="_new" >
+							<img src="/images/case/icon1.png">
+						</a>
+					<?php endif; ?>
+					</span>
+
+				</p>
+
+						<div id="intro" style="">
+					<?php echo $case->content; ?>
+
+						</div>
+
+
+		<p></p>
+
+        <div id="info" class="clearfix">
+            <p>本案資訊</p>
+            <ul>
+            		<?php if($case->investment): ?>
+                		<li>建設：<?php echo $case->investment; ?></li>
+                <?php endif; ?>
+
+                <?php if($case->baseArea): ?>
+                		<li>基地面積：<?php echo $case->baseArea; ?></li>
+                <?php endif; ?>
+
+                <?php if($case->floor): ?>
+                		<li>	樓層：<?php echo $case->floor; ?></li>
+                <?php endif; ?>
+                <?php if($case->households): ?>
+                		<li>戶數：<?php echo $case->households; ?></li>
+                <?php endif; ?>
+
+                <?php if($case->floorNumber): ?>
+                		<li>坪數：<?php echo $case->floorNumber; ?></li>
+                <?php endif; ?>
+                <?php if($case->pattern): ?>
+                		<li>格局：<?php echo $case->pattern; ?></li>
+				<?php endif; ?>
+            </ul>
+            <ul>
+            		<?php if($case->postulate): ?>
+                		<li>公設比：<?php echo $case->postulate; ?></li>
+                <?php endif; ?>
+
+                <?php if($case->one_price): ?>
+                		<li>單價：<?php echo $case->one_price; ?></li>
+                <?php endif; ?>
+
+                <?php if($case->total_price): ?>
+										<span class="price" style="display:none;">
+											<span class="current_price"><?php echo $case->total_price; ?></span>
+											<div class="as-price as-purchaseinfo-price">
+							            <span>
+							                    <meta content="<?php echo $case->total_price; ?>">
+							            </span>
+							            <span class="as-price-currentprice">
+							                    <?php echo $case->total_price; ?>
+
+							            </span>
+							        </div>
+										</span>
+
+                		<li class="price">總價：<?php echo $case->total_price; ?></li>
+
+                <?php endif; ?>
+
+                <?php if($case->base_address): ?>
+                		<li>基地位置：<?php echo $case->base_address; ?></li>
+                <?php endif; ?>
+
+                <?php if($case->reception): ?>
+                		<li>接待中心：<?php echo $case->reception; ?></li>
+                <?php endif; ?>
+
+                <?php if($case->tel): ?>
+                		<li>洽詢電話：
+
+<a href="tel:<?php echo $case->tel; ?>" style="color:blue"><?php echo $case->tel; ?></a>
+
+                        </li>
+                <?php endif; ?>
+
+				<?php if($case->url && strlen($case->url)>6 ): ?>
+                		<li>建案網址：
+						<a href="<?php echo $case->url; ?>" target="_blank"><?php echo $case->url; ?></a>
+						
+						</li>
+                <?php endif; ?>
+
+                <?php if($case->lineLinkOrg): ?>
+					<li>Line官方建案帳號：
+						<a href="<?php echo $case->lineLinkOrg; ?>" target="_blank" style="color:blue;"><?php echo $case->lineLinkOrg; ?></a>
+						
+					</li>
+				<?php endif; ?>
+
+				<?php if($case->data_from): ?>
+					<li>資料來源：
+						<?php echo $case->data_from; ?>						
+					</li>
+				<?php endif; ?>
+            </ul>
+            <div>
+							<?php
+								$s_img = getRateImageType($case->id,'setShow');
+							?>
+							<?php if(  !empty($s_img->image) AND File::exists( public_path().$s_img->image)  ): ?>
+								<img src="/public<?php echo $s_img->image; ?>"     >
+							<?php else: ?>
+								<img src="/images/case/c1.jpg">
+							<?php endif; ?>
+
+						</div>
+        </div>
+
+    </div>
+
+
+    <?php if($case->date_to_house==1): ?>
+    	<?php echo View::make('frontend.report',array('case'=>$case ,'errors'=>$errors) ) ?>
+    <?php endif; ?>
+
+    <section id="map">
+
+
+
+			<div class="googlemap">
+				<img src="/images/case/map.jpg">
+				<iframe width="400" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src=http://maps.google.com.tw/maps?f=q&hl=zh-TW&geocode=&q=<?php echo $case->latitude; ?>,<?php echo $case->longitude; ?>&z=13&output=embed></iframe>
+				<img src="/images/case/map.jpg">
+			</div>
+
+
+        <div class="select">
+            <img class="left" src="/images/index/case_arrowL.png">
+            <img class="right" src="/images/index/case_arrowR.png">
+            <div class="slick3">
+                <div class="area"><a href="/case"><p>全部區域</p><p>ALL</p></a></div>
+
+
+								<?php foreach($areas as $area): ?>
+								<div class="area" id="<?php echo $area->id; ?>">
+										<a href="/case?taiwanArea=<?php echo $area->id; ?>">
+											<p><?php echo $area->name; ?></p>
+											<p><?php echo $area->title; ?></p>
+										</a>
+								</div>
+								<?php endforeach; ?>
+
+
+            </div>
+        </div>
+    </section>
+
+    <aside class="clearfix">
+
+				<?php foreach($cases as $sub_case): ?>
+        <div class="case">
+            <div class="casePic">
+								<a href="/case2/<?php echo $sub_case->id; ?>">
+									<?php
+										$r_img = getRateImageType($sub_case->id,'setList');
+									?>
+									<?php if(  !empty($r_img->image) AND File::exists( public_path().$r_img->image)  ): ?>
+	                						<img src="/public<?php echo $r_img->image; ?>"  >
+									<?php else: ?>
+										<img src="/images/case/case1.jpg"  >
+									<?php endif; ?>
+
+
+
+								</a>
+						</div>
+        </div>
+				<?php endforeach; ?>
+
+
+
+        <p id="page">
+
+					<?php if($taiwanArea): ?>
+					<?php echo with(new CustomPresenter($cases->appends(array('taiwanArea' => $taiwanArea)) ))->render(); ?>
+					<?php else: ?>
+					<?php echo with(new CustomPresenter($cases))->render(); ?>
+					<?php endif; ?>
+				</p>
+    </aside>
+
+    <?php echo $__env->make("frontend.comm.footer", array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+</div>
+
+
+
+<script type="text/javascript">
+		$("document").ready(function(){
+				$(".area").click(function(){
+					location.href="?taiwanArea="+$(this).attr("id");
+				});
+
+				if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+			    // alert("使用行動裝置!");
+					$("#videoBG").hide();
+				}
+
+
+				// var _name    = $("input#name");
+
+				// $("#submit").on('click',function(){
+				// 	alert(_name.val);
+				// });
+
+
+		});
+</script>
+
+
+
+
+<?php
+	$r_img = getRateImageType($case->id,'setFB');
+	// $case->total_price
+?>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type" : "Product",
+  "name" : "<?php echo $case->title; ?>",
+  "logo" : "http://www.maisonbest.com.tw/images/index/logo.jpg",  
+  "url" : "<?php echo Request::url(); ?>",
+  "image" : "<?php if(  !empty($r_img->image) AND File::exists( public_path().$r_img->image)  ): ?>http://www.maisonbest.com.tw/public<?php echo $r_img->image; ?><?php endif; ?>",
+  	
+  	"description" : "<?php echo ms_str($case->content,200); ?>",		 
+	"offers": {
+        "@type": "http://schema.org/AggregateOffer",
+        "priceCurrency": "NTD",
+        "highPrice": "150000",
+        "lowPrice": "350000"
+    }
+  	 
+}
+</script>
+
+
+<style media="screen">
+#videoBG{
+	position: absolute;
+	top: 39%; left: 50%;
+	transform: translateX(-50%);
+	-webkit-transform: translateX(-50%);
+	width: auto; height: 25%;
+}
+.fs1 .slides li{
+	position: relative;
+}
+.fs1 .slideVideo{
+	cursor: pointer;
+}
+.fs1 video{
+	width: 100%;
+	height: auto;
+}
+</style>
+
+<script src="/js/jquery-ui.js"></script>
+
+<script type="text/javascript">
+		$( "#dialog" ).dialog({
+		autoOpen: false,
+		width: 1000,
+		buttons: [
+		{
+			text: "Ok",
+			click: function() {
+				// $("#statement_check").prop('checked', true);
+				$( this ).dialog( "close" );
+			}
+		},
+		{
+			text: "Cancel",
+			click: function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	]
+});
+
+// Link to open the dialog
+$( "#dialog-link" ).click(function( event ) {
+	$( "#dialog" ).dialog( "open" );
+	event.preventDefault();
+});
+</script>
+
+<style>
+
+	.demoHeaders {
+		margin-top: 2em;
+	}
+	#dialog-link {
+		padding: .4em 1em .4em 20px;
+		text-decoration: none;
+		position: relative;
+	}
+	#dialog-link span.ui-icon {
+		margin: 0 5px 0 0;
+		position: absolute;
+		left: .2em;
+		top: 50%;
+		margin-top: -8px;
+	}
+	#icons {
+		margin: 0;
+		padding: 0;
+	}
+	#icons li {
+		margin: 2px;
+		position: relative;
+		padding: 4px 0;
+		cursor: pointer;
+		float: left;
+		list-style: none;
+	}
+	#icons span.ui-icon {
+		float: left;
+		margin: 0 4px;
+	}
+	.fakewindowcontain .ui-widget-overlay {
+		position: absolute;

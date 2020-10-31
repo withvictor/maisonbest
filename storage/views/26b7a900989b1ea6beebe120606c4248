@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html prefix='og: http://ogp.me/ns#'>
+<head>
+	<meta charset="UTF-8">
+	<title>地產動態 | 米築</title>
+
+	<link rel="shortcut icon" href="/favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link rel="stylesheet" type="text/css" href="/css/default.css">
+	<link rel="stylesheet" type="text/css" href="/css/news.css">
+	<meta name="description" content="帶給您最新的房室第一手消息！" />
+	<script src="/js/jquery.js"></script>
+	<script src="/js/jquery.flexslider-min.js"></script>
+	<script src="/js/Crawler.js"></script>
+	<script src="http://malsup.github.com/jquery.cycle2.js"></script>
+
+	<script src="/js/script.js"></script>
+
+
+<?php echo $__env->make("fb_code", array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+</head>
+	<?php echo $__env->make("ba", array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<body>
+<?php echo $__env->make("ga_code", array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php
+
+$titless=array("green","brown","yellow","wheat","pink",);
+$bgs = array( "images/news/n1.jpg",
+							"images/news/n2.jpg",
+							"images/news/n3.jpg",
+							"images/news/n4.jpg",
+							"images/news/n5.jpg",
+								);
+
+?>
+<div id="container">
+	<?php echo $__env->make("frontend.comm.top", array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+
+    <?php echo $__env->make("frontend.comm.top_ad",array("sql_data"=>$ad_20), array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+    <img id="toTop" src="images/toTop.png">
+
+  	<?php echo $__env->make("frontend.comm.row-marquee",array("m"=>"m3" , "c_sql"=>$ad_8), array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+
+    <div id="main" class="clearfix">
+        <section>
+            <p>NEWS</p>
+            <span><h1 style="font-weight:normal;">地產動態</h1></span>
+            <!-- <select>
+                <option>2016</option>
+            </select> -->
+
+						<div class="deco_list">
+								<?php
+
+                $deco_type=array();
+
+
+
+                $type_decos=Post::groupBy("cate")->orderBy("cate","desc")->get();
+                // echo $type;
+								$bgia=0;
+                ?>
+								<div class="news clearfix">
+                  <?php foreach($type_decos as $type_row): ?>
+
+									<?php
+									$bgia+=1;
+									?>
+
+
+                            <a  href="/news?cate=<?php echo $type_row->cate; ?>"
+															style=""
+															 >
+
+          										    <?php echo $type_row->cate; ?>
+
+
+                            </a>
+
+
+
+
+                  <?php endforeach; ?>
+						</div>
+						</div>
+        </section>
+
+
+        <article>
+					<?php
+
+					$bgi=0;
+					?>
+
+						<?php foreach($posts as $post): ?>
+            <div class="news clearfix">
+                <div>
+                    <span class="<?php echo $titless[$bgi]; ?> title"></span><span>
+											<?php
+												// $dd=explode(" ",$post->created_at);
+												// echo $dd[0];
+												echo $post->date;
+											?>
+										</span>
+                    <p class="<?php echo $titless[$bgi]; ?> title"><?php echo $post->name; ?></p>
+                    <p><?php echo ms_str_news($post->content,200); ?><a href="news2/<?php echo $post->id; ?>?color=<?php echo $titless[$bgi]; ?>"><span>(繼續閱讀)</span></a></p>
+                </div>
+
+                <div class="newsPic">
+                    <a href="/news2/<?php echo $post->id; ?>?color=<?php echo $titless[$bgi]; ?>">
+
+
+
+												<?php if( !empty($post->image) AND File::exists(public_path().$post->image) ): ?>
+													<img src="/public<?php echo $post->image; ?>">
+												<?php else: ?>
+													<img src="<?php echo $bgs[$bgi]; ?>">
+												<?php endif; ?>
+													<img class="hover" src="images/news/hover.png">
+
+                    </a>
+                </div>
+            </div>
+						<?php $bgi++;?>
+						<?php endforeach; ?>
+
+
+
+            <p id="page">
+        		<?php if($cate): ?>
+				<?php echo with(new CustomPresenter($posts->appends(array('cate' => $cate)) ))->render(); ?>
+				<?php else: ?>
+				<?php echo with(new CustomPresenter($posts))->render(); ?>
+				<?php endif; ?>
+								
+			</p>
+        </article>
+    </div>
+
+   <?php echo $__env->make("frontend.comm.footer", array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+</div>
+
+<style media="screen">
+	.news.clearfix a{
+		margin: 0 5px;
+		font-size: 18px;
+		text-decoration: none;
+		color: #000;
+	}
+</style>
+
+<script>
+  (function() {
+    var cx = '014562598121488912658:8rjjoh_ab8q';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search></gcse:search>
+</body>
+</html
